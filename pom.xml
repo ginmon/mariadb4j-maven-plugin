@@ -8,7 +8,7 @@
     <artifactId>mariadb4j-maven-plugin-parent</artifactId>
     <packaging>pom</packaging>
     <name>mariadb4j-maven-plugin-parent</name>
-    <version>0.1</version>
+    <version>0.1.0-SNAPSHOT</version>
     <modules>
         <module>mariadb4j-maven-plugin</module>
         <module>tests/mariadb4j-maven-plugin-test-basic</module>
@@ -95,7 +95,7 @@
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-jdk14</artifactId>
+                <artifactId>log4j-over-slf4j</artifactId>
                 <version>1.7.21</version>
             </dependency>
             <dependency>
