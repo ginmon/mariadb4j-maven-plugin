@@ -1,5 +1,7 @@
 package com.github.mike10004.mariadb4jmavenplugin;
 
+import java.io.IOException;
+import java.net.ServerSocket;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -8,64 +10,54 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
-import java.io.IOException;
-import java.net.ServerSocket;
-
 @Mojo(name = "port", defaultPhase = LifecyclePhase.VALIDATE)
 public class Mariadb4jFindFreePortMojo extends AbstractMojo {
 
-    public static final String PROPNAME_PORT = "mariadb4j.port";
+  public static final String PROPNAME_PORT = "mariadb4j.port";
 
-    /**
-     * Maven project.
-     */
-    @Parameter(
-            defaultValue = "${project}",
-            required = true,
-            readonly = true
-    )
-    private transient MavenProject project;
+  /** Maven project. */
+  @Parameter(defaultValue = "${project}", required = true, readonly = true)
+  private transient MavenProject project;
 
-    @Parameter
-    private boolean skip;
+  @Parameter private boolean skip;
 
-    @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
-        if (skip) {
-            getLog().debug("skipping finding free port");
-            return;
-        }
-        int port;
-        try {
-            port = findFreePort();
-        } catch (IOException e) {
-            throw new MojoExecutionException("failed to open socket to find free port", e);
-        }
-        getLog().info("found free port " + port);
-        project.getProperties().setProperty(PROPNAME_PORT, String.valueOf(port));
+  @Override
+  public void execute() throws MojoExecutionException, MojoFailureException {
+    if (skip) {
+      getLog().debug("skipping finding free port");
+      return;
     }
-
-    protected static int findFreePort() throws IOException {
-        ServerSocket ss = new ServerSocket(0);
-        int port = ss.getLocalPort();
-        ss.setReuseAddress(true);
-        ss.close();
-        return port;
+    int port;
+    try {
+      port = findFreePort();
+    } catch (IOException e) {
+      throw new MojoExecutionException("failed to open socket to find free port", e);
     }
+    getLog().info("found free port " + port);
+    project.getProperties().setProperty(PROPNAME_PORT, String.valueOf(port));
+  }
 
-    public MavenProject getProject() {
-        return project;
-    }
+  protected static int findFreePort() throws IOException {
+    ServerSocket ss = new ServerSocket(0);
+    int port = ss.getLocalPort();
+    ss.setReuseAddress(true);
+    ss.close();
+    return port;
+  }
 
-    public void setProject(MavenProject project) {
-        this.project = project;
-    }
+  public MavenProject getProject() {
+    return project;
+  }
 
-    public boolean isSkip() {
-        return skip;
-    }
+  public void setProject(MavenProject project) {
+    this.project = project;
+  }
 
-    public void setSkip(boolean skip) {
-        this.skip = skip;
-    }
+  public boolean isSkip() {
+    return skip;
+  }
+
+  public void setSkip(boolean skip) {
+    this.skip = skip;
+  }
 }
